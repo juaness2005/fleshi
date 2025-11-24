@@ -1,10 +1,13 @@
-
-from appfleshi import database
+from flask_login import UserMixin
+from appfleshi import database, login_manager
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
-class User(database.Model):
+class User(database.Model, UserMixin):
     id = database.Column(database.Integer, primary_key=True)
     username = database.Column(database.String(20), unique=True, nullable=False)
     email = database.Column(database.String(100), unique=True, nullable=False)
