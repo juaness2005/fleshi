@@ -8,10 +8,23 @@
         {% endblock %}
     </title>
 </head>
-
 {% block body %}
     <body>
-        <h1>Fléshi - Página Inicial</h1>
+        <h1>Fléshi - Página Inicial  </h1>
+
+        {% block form %}
+            <form method="post">
+                {{ form.csrf_token }}
+                {{ form.email.label() }}
+                {{ form.email() }}
+
+                {{ form.password.label() }}
+                {{ form.password() }}
+
+                {{ form.submit() }}
+            </form>
+        {% endblock %}
+
     </body>
-{% endblock %}
+{% endblock%}
 </html>
