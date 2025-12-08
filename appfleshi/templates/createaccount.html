@@ -10,8 +10,19 @@
         {{ form.email.label() }}
         {{ form.email() }}
 
+        {% if form.email.errors %}
+            {% for erro in form.email.errors %}
+               <p class="alert alert-danger">{{ erro }}</p>
+            {% endfor %}
+        {% endif %}
+
         {{ form.username.label }}
         {{ form.username() }}
+         {% if form.username.errors %}
+            {% for erro in form.username.errors %}
+               <p class="alert alert-danger">{{ erro }}</p>
+            {% endfor %}
+        {% endif %}
 
         {{ form.password.label() }}
         {{ form.password() }}
@@ -21,4 +32,6 @@
 
         {{ form.submit() }}
    </form>
+
+   <a href="{{ url_for('homepage') }}"> Já possui uma conta? Faça o login!</a>
 {% endblock %}
