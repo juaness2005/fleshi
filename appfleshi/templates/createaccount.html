@@ -6,32 +6,48 @@
 
 {% block form %}
    <form method="post">
-     {{ form.csrf_token }}
-        {{ form.email.label() }}
-        {{ form.email() }}
+       <div class="d-flex justify-content-center">
+           <div class="border m-5 shadow-lg rounded-5 w-50 p-5 w-50 ">
+               <form>
+                   {{ form.csrf_token }}
 
-        {% if form.email.errors %}
-            {% for erro in form.email.errors %}
-               <p class="alert alert-danger">{{ erro }}</p>
-            {% endfor %}
-        {% endif %}
+                   <div class="mb-3">
+                       {{ form.email.label() }}
+                       {{ form.email() }}
+                       {% if form.email.errors %}
+                            {% for erro in form.email.errors %}
+                               <p class="alert alert-danger">{{ erro }}</p>
+                            {% endfor %}
+                       {% endif %}
+                   </div>
 
-        {{ form.username.label }}
-        {{ form.username() }}
-         {% if form.username.errors %}
-            {% for erro in form.username.errors %}
-               <p class="alert alert-danger">{{ erro }}</p>
-            {% endfor %}
-        {% endif %}
+                    <div class="mb-3">
+                        {{ form.username.label }}
+                        {{ form.username() }}
+                         {% if form.username.errors %}
+                            {% for erro in form.username.errors %}
+                               <p class="alert alert-danger">{{ erro }}</p>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
 
-        {{ form.password.label() }}
-        {{ form.password() }}
+                    <div class="mb-3">
+                        {{ form.password.label() }}
+                        {{ form.password() }}
+                    </div>
 
-        {{ form.confirm_password.label() }}
-        {{ form.confirm_password() }}
+                    <div class="mb-3">
+                        {{ form.confirm_password.label() }}
+                        {{ form.confirm_password() }}
+                    </div>
 
-        {{ form.submit() }}
-   </form>
 
-   <a href="{{ url_for('homepage') }}"> Já possui uma conta? Faça o login!</a>
+                   {{ form.submit(class="btn btn-outline-success w-100") }}
+               </form>
+                <a href="{{ url_for('homepage') }}"> Já possui uma conta? Faça o login!</a>
+           </div>
+       </div>
+
+
+
 {% endblock %}

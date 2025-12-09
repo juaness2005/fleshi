@@ -21,8 +21,17 @@
         {% endif %}
 
         {% for photo in user.photos %}
-            <img src="{{ url_for('static', filename='posts_photos/'~ photo.file_name) }}" alt="Imagem">
+            <img src="{{ url_for('static', filename='posts_photos/' ~ photo.file_name) }}">
+
+
+        {% if current_user.is_authenticated and current_user.id == user.id %}
+            <!-- Só aparece no perfil do usuário logado -->
+            <form action="{{ url_for('delete', photo_id=photo.id) }}" method="POST">
+                <button type="submit" class="delete-btn">Excluir</button>
+            </form>
+        {% endif %}
         {% endfor %}
+
 
 
     </body>
