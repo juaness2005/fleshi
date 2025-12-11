@@ -7,9 +7,6 @@ from appfleshi import app, database, bcrypt
 from appfleshi.forms import LoginForm, RegisterForm, PhotoForm
 from appfleshi.models import User, Photo
 
-
-# HOME PAGE  -------------------------------------------------------
-
 @app.route('/', methods=['GET', 'POST'])
 def homepage():
     login_form = LoginForm()
@@ -21,7 +18,6 @@ def homepage():
     return render_template('homepage.html', form=login_form)
 
 
-# CRIAR CONTA -------------------------------------------------------
 
 @app.route('/createaccount', methods=['GET', 'POST'])
 def createaccount():
@@ -37,14 +33,9 @@ def createaccount():
         return redirect(url_for('profile', user_id=user.id))
     return render_template('createaccount.html', form=register_form)
 
-
-# PERFIL --------------------------------------------------------------
-
 @app.route('/profile/<int:user_id>', methods=['GET', 'POST'])
 @login_required
 def profile(user_id):
-
-    # --- PERFIL DO USUÁRIO LOGADO ---
     if user_id == current_user.id:
         photo_form = PhotoForm()
 
@@ -57,16 +48,19 @@ def profile(user_id):
             unique_name = f"{time.time_ns()}_{filename}"
 
             path = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'], unique_name)
-
             file.save(path)
 
-            photo = Photo(file_name=unique_name, user_id=current_user.id)
+            photo = Photo(
+                file_name=unique_name,
+                user_id=current_user.id,
+                caption=photo_form.caption.data
+            )
+
             database.session.add(photo)
             database.session.commit()
 
             return redirect(url_for('profile', user_id=current_user.id))
 
-        # PEGAR FOTOS NA ORDEM CORRETA
         photos = Photo.query.filter_by(user_id=current_user.id).order_by(Photo.upload_date.desc()).all()
 
         return render_template(
@@ -76,7 +70,6 @@ def profile(user_id):
             photos=photos
         )
 
-    # --- PERFIL DE OUTRA PESSOA ---
     else:
         user = User.query.get_or_404(user_id)
         photos = Photo.query.filter_by(user_id=user.id).order_by(Photo.upload_date.desc()).all()
@@ -87,8 +80,6 @@ def profile(user_id):
             form=None,
             photos=photos
         )
-
-# DELETAR FOTO --------------------------------------------------------
 
 @app.route('/delete/<int:photo_id>', methods=['POST'])
 @login_required
@@ -101,28 +92,20 @@ def delete(photo_id):
     if photo.user_id != current_user.id:
         abort(403)
 
-    # Deleta arquivo físico
     file_path = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'], photo.file_name)
     if os.path.exists(file_path):
         os.remove(file_path)
 
-    # Deleta do banco
     database.session.delete(photo)
     database.session.commit()
 
     return redirect(url_for("profile", user_id=current_user.id))
-
-
-# LOGOUT --------------------------------------------------------------
 
 @app.route('/logout')
 @login_required
 def logout():
     logout_user()
     return redirect(url_for('homepage'))
-
-
-# FEED --------------------------------------------------------------
 
 @app.route('/feed')
 @login_required

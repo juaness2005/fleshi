@@ -1,11 +1,13 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, FileField
+from wtforms import StringField, PasswordField, SubmitField, FileField, TextAreaField
 from wtforms.validators import DataRequired, Email, EqualTo, ValidationError, Length
 from appfleshi.models import User
 
 class PhotoForm(FlaskForm):
-    photo = FileField("Foto",validators=[DataRequired()])
+    photo = FileField("Foto", validators=[DataRequired()])
+    caption = TextAreaField("Legenda")  # <-- ADICIONADO
     submit = SubmitField("Postar")
+
 
 class LoginForm(FlaskForm):
     email = StringField("E-mail", validators=[DataRequired(), Email()])
@@ -17,7 +19,6 @@ class LoginForm(FlaskForm):
         if not user:
             raise ValidationError("Usuário não encontrado")
 
-        return None
 
 class RegisterForm(FlaskForm):
     email = StringField("E-mail", validators=[DataRequired(), Email()])
@@ -31,10 +32,7 @@ class RegisterForm(FlaskForm):
         if user:
             raise ValidationError("E-mail já cadastrado!")
 
-        return None
-
     def validate_username(self, username):
         user = User.query.filter_by(username=username.data).first()
         if user:
             raise ValidationError("Usuário já existe")
-        return None

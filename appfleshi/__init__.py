@@ -14,3 +14,7 @@ login_manager = LoginManager(app)
 login_manager.login_view = 'homepage'
 
 from appfleshi import routes
+from appfleshi import models
+
+with app.app_context():
+    database.create_all()

@@ -5,34 +5,39 @@
 {% endblock %}
 
 {% block body %}
-    <body>
+<body>
     {% include "navbar.html" %}
 
-        <h1>Perfil do usuário: {{ user.username }}</h1>
+    <h1>Perfil do usuário: {{ user.username }}</h1>
 
-        {% if form %}
-        <form method="post" enctype="multipart/form-data">
-            {{ form.csrf_token }}
+    {% if form %}
+    <form method="post" enctype="multipart/form-data">
+        {{ form.csrf_token }}
 
-            {{ form.photo }}
+        {{ form.photo }}
 
-            {{ form.submit }}
-        </form>
-        {% endif %}
+        <label>Legenda:</label>
+        {{ form.caption }}
 
-        {% for photo in user.photos %}
-            <img src="{{ url_for('static', filename='posts_photos/' ~ photo.file_name) }}">
+        {{ form.submit }}
+    </form>
+    {% endif %}
 
+    {% for photo in photos %}
+        <div style="margin-bottom: 20px;">
+            <img src="{{ url_for('static', filename='posts_photos/' ~ photo.file_name) }}"
+                 style="max-width: 300px;">
 
-        {% if current_user.is_authenticated and current_user.id == user.id %}
-            <!-- Só aparece no perfil do usuário logado -->
-            <form action="{{ url_for('delete', photo_id=photo.id) }}" method="POST">
-                <button type="submit" class="delete-btn">Excluir</button>
-            </form>
-        {% endif %}
-        {% endfor %}
+            {% if photo.caption %}
+                <p>{{ photo.caption }}</p>
+            {% endif %}
 
-
-
-    </body>
+            {% if current_user.is_authenticated and current_user.id == user.id %}
+                <form action="{{ url_for('delete', photo_id=photo.id) }}" method="POST">
+                    <button type="submit" class="delete-btn">Excluir</button>
+                </form>
+            {% endif %}
+        </div>
+    {% endfor %}
+</body>
 {% endblock %}
