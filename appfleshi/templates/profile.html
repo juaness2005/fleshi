@@ -5,39 +5,80 @@
 {% endblock %}
 
 {% block body %}
-<body>
+
     {% include "navbar.html" %}
 
-    <h1>Perfil do usuário: {{ user.username }}</h1>
+    <div class="container" style="margin-top: 110px;">
+        <h2 class="text-center mb-4">Perfil de {{ user.username }}</h2>
 
-    {% if form %}
-    <form method="post" enctype="multipart/form-data">
-        {{ form.csrf_token }}
+        {% if form %}
+            <div class="card shadow-sm mb-4 p-4" style="max-width: 500px; margin: auto;">
+                <h5 class="mb-3 text-center">Enviar nova foto</h5>
 
-        {{ form.photo }}
+                <form method="post" enctype="multipart/form-data">
+                    {{ form.csrf_token }}
 
-        <label>Legenda:</label>
-        {{ form.caption }}
+                    <div class="mb-3">
+                        <label class="form-label">Foto:</label>
+                        {{ form.photo(class="form-control") }}
+                    </div>
 
-        {{ form.submit }}
-    </form>
-    {% endif %}
+                    <div class="mb-3">
+                        <label class="form-label">Legenda:</label>
+                        {{ form.caption(class="form-control") }}
+                    </div>
 
-    {% for photo in photos %}
-        <div style="margin-bottom: 20px;">
-            <img src="{{ url_for('static', filename='posts_photos/' ~ photo.file_name) }}"
-                 style="max-width: 300px;">
-
-            {% if photo.caption %}
-                <p>{{ photo.caption }}</p>
-            {% endif %}
-
-            {% if current_user.is_authenticated and current_user.id == user.id %}
-                <form action="{{ url_for('delete', photo_id=photo.id) }}" method="POST">
-                    <button type="submit" class="delete-btn">Excluir</button>
+                    {{ form.submit(class="btn w-100", style="background:#6f42c1; color:white;") }}
                 </form>
-            {% endif %}
+            </div>
+        {% endif %}
+
+        <div class="row justify-content-center">
+            {% for photo in photos %}
+            <div class="col-md-4 col-sm-6 mb-4">
+
+                <div class="card shadow-sm">
+                    <img src="{{ url_for('static', filename='posts_photos/' ~ photo.file_name) }}"
+                         class="card-img-top"
+                         alt="Foto de perfil">
+
+                    <div class="card-body">
+
+                        {% if photo.caption %}
+                        <p class="card-text">
+                            <strong>{{ user.username }}:</strong> {{ photo.caption }}
+                        </p>
+                        {% endif %}
+
+                        {% set liked = photo.likes|selectattr("user_id", "equalto", current_user.id)|list %}
+
+                        <form action="{{ url_for('like', photo_id=photo.id) }}" method="POST" class="mb-2">
+                            {% if liked %}
+                                <button type="submit" class="btn w-100" style="background:#6f42c1; color:white;">
+                                    💜 Descurtir
+                                </button>
+                            {% else %}
+                                <button type="submit" class="btn w-100" style="background:#6f42c1; color:white;">
+                                    💜 Curtir
+                                </button>
+                            {% endif %}
+                        </form>
+
+                        {% if current_user.is_authenticated and current_user.id == user.id %}
+                        <form action="{{ url_for('delete', photo_id=photo.id) }}" method="POST">
+                            <button type="submit" class="btn btn-danger w-100">
+                                Excluir foto
+                            </button>
+                        </form>
+                        {% endif %}
+
+                    </div>
+                </div>
+
+            </div>
+            {% endfor %}
         </div>
-    {% endfor %}
-</body>
+
+    </div>
+
 {% endblock %}

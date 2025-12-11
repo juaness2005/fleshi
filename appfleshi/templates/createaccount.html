@@ -1,53 +1,63 @@
 {% extends "homepage.html" %}
 
 {% block title %}
-  Fléshi  - Criar Conta
+  Fléshi - Criar Conta
 {% endblock %}
 
 {% block form %}
-   <form method="post">
-       <div class="d-flex justify-content-center">
-           <div class="border m-5 shadow-lg rounded-5 w-50 p-5 w-50 ">
-               <form>
-                   {{ form.csrf_token }}
+<form method="post">
+    {{ form.csrf_token }}
+    <div class="d-flex justify-content-center">
+        <div class="border m-5 shadow-lg rounded-5 w-50 p-5">
 
-                   <div class="mb-3">
-                       {{ form.email.label() }}
-                       {{ form.email() }}
-                       {% if form.email.errors %}
-                            {% for erro in form.email.errors %}
-                               <p class="alert alert-danger">{{ erro }}</p>
-                            {% endfor %}
-                       {% endif %}
-                   </div>
+            <div class="text-center mb-4">
+                <img src="{{ url_for('static', filename='img/logo.png') }}"
+                     alt="Fléshi Logo"
+                     class="img-fluid"
+                     style="width: 140px;">
+            </div>
 
-                    <div class="mb-3">
-                        {{ form.username.label }}
-                        {{ form.username() }}
-                         {% if form.username.errors %}
-                            {% for erro in form.username.errors %}
-                               <p class="alert alert-danger">{{ erro }}</p>
-                            {% endfor %}
-                        {% endif %}
-                    </div>
+            <h1 class="text-center mb-4">Fléshi - Criar Conta</h1>
 
-                    <div class="mb-3">
-                        {{ form.password.label() }}
-                        {{ form.password() }}
-                    </div>
+            <div class="mb-3">
+                {{ form.email.label(class="form-label") }}
+                {{ form.email(class="form-control") }}
 
-                    <div class="mb-3">
-                        {{ form.confirm_password.label() }}
-                        {{ form.confirm_password() }}
-                    </div>
+                {% if form.email.errors %}
+                    {% for erro in form.email.errors %}
+                        <p class="alert alert-danger mt-2">{{ erro }}</p>
+                    {% endfor %}
+                {% endif %}
+            </div>
 
+            <div class="mb-3">
+                {{ form.username.label(class="form-label") }}
+                {{ form.username(class="form-control") }}
 
-                   {{ form.submit(class="btn btn-outline-success w-100") }}
-               </form>
-                <a href="{{ url_for('homepage') }}"> Já possui uma conta? Faça o login!</a>
-           </div>
-       </div>
+                {% if form.username.errors %}
+                    {% for erro in form.username.errors %}
+                        <p class="alert alert-danger mt-2">{{ erro }}</p>
+                    {% endfor %}
+                {% endif %}
+            </div>
 
+            <div class="mb-3">
+                {{ form.password.label(class="form-label") }}
+                {{ form.password(class="form-control") }}
+            </div>
 
+            <div class="mb-3">
+                {{ form.confirm_password.label(class="form-label") }}
+                {{ form.confirm_password(class="form-control") }}
+            </div>
 
+            {{ form.submit(class="btn custom-purple w-100") }}
+
+            <a href="{{ url_for('homepage') }}"
+               class="d-flex justify-content-center mt-3">
+                Já possui uma conta? Faça o login!
+            </a>
+        </div>
+    </div>
+</form>
 {% endblock %}

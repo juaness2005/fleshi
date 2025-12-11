@@ -6,23 +6,83 @@
 
 {% block body %}
     {% include "navbar.html" %}
-    <h1>Feed Principal</h1>
 
-    {% for photo in photos %}
-        <div style="margin-bottom: 25px;">
+    <h1 class="text-center my-4 text-purple">Feed Principal</h1>
 
-            <a href="{{ url_for('profile', user_id=photo.user_id) }}">
-                <img src="{{ url_for('static', filename='posts_photos/' ~ photo.file_name) }}"
-                     alt="Imagem"
-                     style="max-width: 350px; display: block;">
-            </a>
+    <div class="container">
+        <div class="row justify-content-center">
 
-            {% if photo.caption %}
-                <p style="margin-top: 5px;">
-                    <strong>{{ photo.user.username }}:</strong> {{ photo.caption }}
-                </p>
-            {% endif %}
+            {% for photo in photos %}
+            <div class="col-md-6">
+
+                <div class="card shadow-lg mb-4 rounded-4">
+
+                    <a href="{{ url_for('profile', user_id=photo.user_id) }}">
+                        <img src="{{ url_for('static', filename='posts_photos/' ~ photo.file_name) }}"
+                             class="card-img-top rounded-top-4"
+                             alt="Imagem">
+                    </a>
+
+                    <div class="card-body">
+
+                        {% if photo.caption %}
+                            <p class="card-text">
+                                <strong class="text-purple">{{ photo.user.username }}:</strong>
+                                {{ photo.caption }}
+                            </p>
+                        {% endif %}
+
+                        {% set liked = photo.likes|selectattr("user_id", "equalto", current_user.id)|list %}
+
+                        <form action="{{ url_for('like', photo_id=photo.id) }}" method="POST">
+                            {% if liked %}
+                                <button type="submit" class="btn btn-purple w-100">
+                                    💜️️ Descurtir
+                                </button>
+                            {% else %}
+                                <button type="submit" class="btn btn-purple w-100">
+                                    💜 Curtir
+                                </button>
+                            {% endif %}
+                        </form>
+
+                    </div>
+                </div>
+
+            </div>
+            {% endfor %}
 
         </div>
-    {% endfor %}
+    </div>
+
+    <style>
+        .text-purple {
+            color: #6f42c1;
+        }
+
+        .btn-purple {
+            background-color: #6f42c1;
+            color: white;
+            font-weight: bold;
+            border: none;
+            transition: 0.2s ease;
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .btn-purple:hover {
+            background-color: #5a32a3;
+            color: white;
+        }
+
+        .rounded-top-4 {
+            border-top-left-radius: 1rem !important;
+            border-top-right-radius: 1rem !important;
+        }
+
+        .rounded-4 {
+            border-radius: 1rem !important;
+        }
+    </style>
+
 {% endblock %}

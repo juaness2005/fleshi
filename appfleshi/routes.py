@@ -1,11 +1,12 @@
-from flask import render_template, url_for, redirect, flash, abort
+from flask import render_template, url_for, redirect, flash, abort, request
 from flask_login import login_required, login_user, logout_user, current_user
 from werkzeug.utils import secure_filename
 import os
 
 from appfleshi import app, database, bcrypt
 from appfleshi.forms import LoginForm, RegisterForm, PhotoForm
-from appfleshi.models import User, Photo
+from appfleshi.models import User, Photo, Like
+
 
 @app.route('/', methods=['GET', 'POST'])
 def homepage():
@@ -112,3 +113,24 @@ def logout():
 def feed():
     photos = Photo.query.order_by(Photo.upload_date.desc()).all()
     return render_template("feed.html", photos=photos)
+
+@app.route('/like/<int:photo_id>', methods=['POST'])
+@login_required
+def like(photo_id):
+    photo = Photo.query.filter_by(id=photo_id).first()
+
+    if not photo:
+        return redirect(url_for('feed'))
+
+    liked= Like.query.filter_by(user_id=current_user.id, photo_id=photo_id).first()
+
+    if liked:
+        database.session.delete(liked)
+        database.session.commit()
+
+    else:
+        new_like = Like(user_id=current_user.id, photo_id=photo_id)
+        database.session.add(new_like)
+        database.session.commit()
+
+    return redirect(request.referrer or url_for('feed'))
