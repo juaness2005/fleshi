@@ -12,7 +12,7 @@ class User(database.Model, UserMixin):
     username = database.Column(database.String(20), unique=True, nullable=False)
     email = database.Column(database.String(100), unique=True, nullable=False)
     password = database.Column(database.String(60), nullable=False)
-    photos =  database.relationship('Photo', backref='user', lazy=True)
+    photos = database.relationship('Photo', backref='user', lazy=True)
     likes = database.relationship('Like', backref='user', lazy=True)
 
 
@@ -22,9 +22,10 @@ class Photo(database.Model):
     upload_date = database.Column(database.DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc))
     user_id = database.Column(database.Integer, database.ForeignKey('user.id'), nullable=False)
     caption = database.Column(database.Text, nullable=True)
-    likes = database.relationship('Like', backref='photo', lazy=True)
+    likes = database.relationship('Like',backref='photo',lazy=True, cascade="all, delete-orphan")
+
 
 class Like(database.Model):
     id = database.Column(database.Integer, primary_key=True)
     user_id = database.Column(database.Integer, database.ForeignKey('user.id'), nullable=False)
-    photo_id = database.Column(database.Integer, database.ForeignKey('photo.id'), nullable=False)
+    photo_id = database.Column(database.Integer, database.ForeignKey('photo.id', ondelete="CASCADE"),nullable=False)
